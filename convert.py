@@ -18,16 +18,17 @@ class Convert():
 
     def __isValidArabicNumeral(self, number):
         if number is None:
-            raise ValueError
+            return False
         if not isinstance(number, int):
-            raise ValueError
+            return False
         if number <= 0:
-            raise ValueError
+            return False
         if number > 3999:
-            raise ValueError
+            return False
         return True
     
     def __isValidRomanNumeral(self, number):
+        # Only allow specific characters
         p = re.compile('[IVXLCDM]+')
         if p.match(number):
             return True
@@ -38,20 +39,21 @@ class Convert():
         return p.findall(number)
 
     def __encode(self, value, index):
-        # Special case zero is nothing
+        # Special case, zero is nothing
         if (int(value) == 0):
             return ''
 
-        if index == 3:
+        if index == 3: # Matches thousands
             return self.roman['thousands'][int(value)-1]
-        elif index == 2:
+        elif index == 2: # Matches hundreds
             return self.roman['hundreds'][int(value)-1]
-        elif index == 1:
+        elif index == 1: # Matches tens
             return self.roman['tens'][int(value)-1]
-        else:
+        else: # Matches units
             return self.roman['units'][int(value)-1]
 
     def __decode(self, value, index):
+        # Special case, nothing is 0
         if not value:
             return 0
         
@@ -66,8 +68,10 @@ class Convert():
 
     def toRoman(self, number=None):
         if self.__isValidArabicNumeral(number):
+            # Convert to list of strings
             original = [x for x in str(number)]
             original.reverse()
+            # Finding matching strings
             encoded = [self.__encode(x, i) for i, x in enumerate(original)]
             encoded.reverse()
             return ''.join(encoded)
@@ -76,7 +80,9 @@ class Convert():
     
     def toArabic(self, number=None):
         if self.__isValidRomanNumeral(number.upper()):
+            # Parse input string 
             parsed = list(self.__parseRomanNumeral(number.upper())[0])
+            # Find matching numbers
             decoded = [self.__decode(x, i) for i, x in enumerate(parsed)]
             return sum(decoded)
         else:
