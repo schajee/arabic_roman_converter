@@ -28,7 +28,7 @@ class Convert():
         return True
     
     def __isValidRomanNumeral(self, number):
-        p = re.compile('[IVXLCDMivxlcdm]+')
+        p = re.compile('[IVXLCDM]+')
         if p.match(number):
             return True
         return False
